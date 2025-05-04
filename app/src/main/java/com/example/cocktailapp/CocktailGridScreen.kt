@@ -88,7 +88,7 @@ fun CocktailGridItem(cocktail: Cocktail, onClick: () -> Unit) {
                         1.dp, // Grubość obramówki
                         Color.Black // Kolor obramówki - czarny
                     ),
-                    RoundedCornerShape(15.dp) // Obramówka ma zaokrąglone rogi o promieniu 15dp
+                    RoundedCornerShape(16.dp) // Obramówka ma zaokrąglone rogi o promieniu 15dp
                 )
                 .clip(RoundedCornerShape(15.dp)), // Zaokrąglamy rogi obrazu o promieniu 15dp
             contentScale = ContentScale.Crop // Skalowanie obrazu
