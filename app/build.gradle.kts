@@ -40,6 +40,11 @@ android {
 }
 
 dependencies {
+    implementation ("nl.dionsegijn:konfetti-compose:2.0.5")
+    implementation ("nl.dionsegijn:konfetti-core:2.0.2")
+
+    implementation ("androidx.compose.material:material-icons-extended:1.4.3")
+
     implementation("io.coil-kt:coil-compose:2.4.0")
 
 // Jetpack Compose BOM

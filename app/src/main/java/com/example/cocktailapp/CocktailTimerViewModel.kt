@@ -12,6 +12,9 @@ class CocktailTimerViewModel : ViewModel() {
 
     private var timerJob: Job? = null
 
+    private val _showConfetti = MutableStateFlow(false)
+    val showConfetti: StateFlow<Boolean> = _showConfetti
+
     private val _timeLeft = MutableStateFlow(0)
     val timeLeft: StateFlow<Int> = _timeLeft
 
@@ -24,6 +27,21 @@ class CocktailTimerViewModel : ViewModel() {
         resumeTimer()
     }
 
+    private fun startConfetti() {
+        viewModelScope.launch {
+            println("🔄 Resetting confetti")
+            _showConfetti.value = false
+            delay(100)
+            println("✅ Triggering confetti")
+            _showConfetti.value = true
+        }
+    }
+
+    fun resetConfetti() {
+        _showConfetti.value = false
+    }
+
+
     fun resumeTimer() {
         if (!_isRunning.value && _timeLeft.value > 0) {
             _isRunning.value = true
@@ -31,6 +49,10 @@ class CocktailTimerViewModel : ViewModel() {
                 while (_timeLeft.value > 0 && _isRunning.value) {
                     delay(1000L)
                     _timeLeft.value -= 1
+
+                    if (_timeLeft.value == 0) {
+                        startConfetti()
+                    }
                 }
                 _isRunning.value = false
             }
@@ -45,6 +67,7 @@ class CocktailTimerViewModel : ViewModel() {
         timerJob?.cancel()
         _timeLeft.value = seconds
         _isRunning.value = false
+        _showConfetti.value = false  // wyłącz konfetti przy resecie
     }
 
     override fun onCleared() {

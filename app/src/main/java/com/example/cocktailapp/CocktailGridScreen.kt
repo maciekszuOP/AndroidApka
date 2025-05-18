@@ -1,5 +1,6 @@
 package com.example.cocktailapp
 
+import android.annotation.SuppressLint
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.foundation.BorderStroke
@@ -13,6 +14,10 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.* // Pamiętaj o imporcie Material 3
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -21,21 +26,26 @@ import androidx.compose.ui.unit.dp
 import com.example.cocktailapp.data.Cocktail
 import com.example.cocktailapp.data.FakeCocktailRepository
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign // Import dla wyrównania tekstu
+import androidx.compose.ui.unit.sp
+import androidx.compose.runtime.setValue
 
+
+@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class) // Wymagana adnotacja dla TopAppBar w Material 3
+
 @Composable
 fun CocktailGridScreen(onCocktailClick: (Int) -> Unit) {
     val cocktails = FakeCocktailRepository.cocktails
 
-    // *** Tutaj używamy Scaffold ***
     Scaffold(
-        // Definicja górnego paska (TopAppBar)
         topBar = {
             TopAppBar(
                 title = {
                     Text(
-                        "Takie tam drinki", // Tytuł paska
+                        "Takie tam drinki",
                         style = MaterialTheme.typography.headlineMedium,
                         color = MaterialTheme.colorScheme.onPrimary,
                         textAlign = TextAlign.Center,
@@ -45,31 +55,56 @@ fun CocktailGridScreen(onCocktailClick: (Int) -> Unit) {
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )
-                // Możesz dodać nawigacyjne ikony lub akcje tutaj
             )
-        },
-        // Możesz dodać inne parametry Scaffold, np. bottomBar, floatingActionButton
-    ) { paddingValues -> // Ten parametr zawiera padding wymagany przez Scaffold
-        // *** Tutaj umieszczamy główną zawartość ekranu ***
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
+        }
+    ) { paddingValues ->
+        BoxWithConstraints(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues), // *** Bardzo ważne: zastosuj padding! ***
-            contentPadding = PaddingValues(12.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                .padding(paddingValues)
         ) {
-            items(cocktails) { cocktail ->
-                CocktailGridItem(cocktail = cocktail, onClick = { onCocktailClick(cocktail.id) })
+            val columns = when {
+                maxWidth < 400.dp -> 1
+                maxWidth < 600.dp -> 2
+                maxWidth < 840.dp -> 3
+                else -> 4
+            }
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                contentPadding = PaddingValues(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(cocktails) { cocktail ->
+                    CocktailGridItem(
+                        cocktail = cocktail,
+                        onClick = { onCocktailClick(cocktail.id) }
+                    )
+                }
             }
         }
     }
 }
 
-// Komponent do wyświetlania pojedynczego elementu w siatce (bez zmian w strukturze)
+
+
 @Composable
 fun CocktailGridItem(cocktail: Cocktail, onClick: () -> Unit) {
+    var imageWidthPx by remember { mutableIntStateOf(0) }
+    val density = LocalDensity.current
+    val imageWidthDp = with(density) { imageWidthPx.toDp() }
+
+    // Współczynnik skalowania
+    val scale = imageWidthDp.value / 100f
+
+    // Dynamiczne style
+    val fontSize = (scale * 10f).sp
+    val horizontalPadding = (scale * 8f).dp
+    val borderThickness = (scale * 1f).dp
+    val cornerRadius = (scale * 12f).dp
+    val spacing = (scale * 4f).dp
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -81,25 +116,26 @@ fun CocktailGridItem(cocktail: Cocktail, onClick: () -> Unit) {
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
-                .padding(bottom = 4.dp)
-                // Dodajemy modyfikatory do ulepszenia wyglądu
-                .border( // Dodajemy obramówkę
-                    BorderStroke(
-                        1.dp, // Grubość obramówki
-                        Color.Black // Kolor obramówki - czarny
-                    ),
-                    RoundedCornerShape(16.dp) // Obramówka ma zaokrąglone rogi o promieniu 15dp
+                .padding(bottom = spacing)
+                .border(
+                    BorderStroke(borderThickness, Color.Black),
+                    RoundedCornerShape(cornerRadius)
                 )
-                .clip(RoundedCornerShape(15.dp)), // Zaokrąglamy rogi obrazu o promieniu 15dp
-            contentScale = ContentScale.Crop // Skalowanie obrazu
+                .clip(RoundedCornerShape(cornerRadius))
+                .onSizeChanged { size ->
+                    imageWidthPx = size.width
+                },
+            contentScale = ContentScale.Crop
         )
         Text(
             text = cocktail.name,
+            fontSize = fontSize,
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier
-                .fillMaxWidth() // Text wypełnia całą dostępną szerokość Column
-                .padding(horizontal = 8.dp), // *** Padding horyzontalny 8dp ***
-            textAlign = TextAlign.Center // Tekst jest wyśrodkowany poziomo
+                .fillMaxWidth()
+                .padding(horizontal = horizontalPadding),
+            textAlign = TextAlign.Center
         )
     }
 }
+
