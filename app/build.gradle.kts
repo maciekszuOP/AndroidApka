@@ -3,7 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
 }
-
 android {
     namespace = "com.example.cocktailapp"
     compileSdk = 35
@@ -35,13 +34,22 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+
         compose = true
     }
 }
 
 dependencies {
+
+// Coroutine support (jeśli chcesz)
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+
+    implementation ("androidx.appcompat:appcompat:1.6.1")
+
+
     implementation ("nl.dionsegijn:konfetti-compose:2.0.5")
     implementation ("nl.dionsegijn:konfetti-core:2.0.2")
+    implementation ("androidx.compose.foundation:foundation:1.6.0") // lub nowsza wersja Compose
 
     implementation ("androidx.compose.material:material-icons-extended:1.4.3")
 

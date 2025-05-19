@@ -8,5 +8,6 @@ data class Cocktail(
     val ingredients: List<String>,
     val instructions: String,
     val shakeTimeInSeconds: Int,
-    @DrawableRes val imageRes: Int // <-- lokalny obrazek z drawable
+    val isAlcoholic: Boolean, // czy koktajl jest alkoholowy
+    @DrawableRes val imageRes: Int // lokalny obrazek z drawable
 )

@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
+import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,19 +18,18 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cocktailapp.data.Cocktail
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 import nl.dionsegijn.konfetti.compose.KonfettiView
 import nl.dionsegijn.konfetti.core.*
-//import nl.dionsegijn.konfetti.core.
-import nl.dionsegijn.konfetti.core.Position
-import nl.dionsegijn.konfetti.core.Angle
-//import nl.dionsegijn.konfetti.core.Speed
 import nl.dionsegijn.konfetti.core.emitter.Emitter
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CocktailDetailScreen(
     cocktail: Cocktail,
+    onToggleTheme: () -> Unit,
     viewModel: CocktailTimerViewModel = viewModel()
 ) {
     val timeLeft by viewModel.timeLeft.collectAsState()
@@ -47,10 +47,11 @@ fun CocktailDetailScreen(
 
     var parties by remember { mutableStateOf<List<Party>>(emptyList()) }
 
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(showConfetti) {
-        println("🎉 Confetti trigger: $showConfetti")
         if (showConfetti) {
-            // Zmień listę — nowa instancja za każdym razem
             val party = Party(
                 emitter = Emitter(duration = 3, TimeUnit.SECONDS).perSecond(200),
                 speed = 0f,
@@ -60,110 +61,119 @@ fun CocktailDetailScreen(
                 colors = listOf(0xfce18a, 0xff726d, 0xf4306d, 0xb48def),
                 position = Position.Relative(0.5, 0.3)
             )
-
-            parties = listOf(party) // Nowa instancja
+            parties = listOf(party)
             delay(5000)
             parties = emptyList()
             viewModel.resetConfetti()
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        if (parties.isNotEmpty()) {
-            KonfettiView(
-                modifier = Modifier.fillMaxSize(),
-                parties = parties
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        cocktail.name,
+                        style = MaterialTheme.typography.headlineLarge,
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary)
             )
-        }
-
-
-        Column(
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Składniki SMS: ${cocktail.ingredients.joinToString(", ")}"
+                        )
+                    }
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Default.PlayArrow, // Możesz użyć innej ikony, np. Icons.Default.Send
+                    contentDescription = "Wyślij SMS"
+                )
+            }
+        },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(paddingValues)
         ) {
-            Text(
-                text = cocktail.name,
-                style = MaterialTheme.typography.headlineLarge,
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(16.dp))
 
-            Text(text = "Składniki:", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-
-            cocktail.ingredients.forEach {
-                Text(text = "• $it")
+            if (parties.isNotEmpty()) {
+                KonfettiView(
+                    modifier = Modifier.fillMaxSize(),
+                    parties = parties
+                )
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-            Divider()
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Text(text = "Sposób przygotowania:", style = MaterialTheme.typography.titleMedium)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = cocktail.instructions)
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Text(
-                "⏱️ Wstrząsaj przez: ${cocktail.shakeTimeInSeconds} sekundy",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Spacer(modifier = Modifier.height(12.dp))
-
-            Text(
-                "Pozostały czas:",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            Text(
-                "$timeLeft sek.",
-                modifier = if(isRunning) Modifier
-                    .fillMaxWidth()
-                    .graphicsLayer(scaleX = scale, scaleY = scale) else Modifier
-                    .fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                fontSize = 36.sp,
-                color = if (timeLeft == 0) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(16.dp)
             ) {
-                Button(
-                    onClick = {
-                        if (timeLeft > 0 && !isRunning) {
-                            viewModel.resumeTimer()
-                        } else {
-                            viewModel.startTimer(cocktail.shakeTimeInSeconds)
-                        }
-                    }
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Składniki:", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+
+                cocktail.ingredients.forEach {
+                    Text(text = "• $it")
+                }
+
+                Spacer(modifier = Modifier.height(48.dp))
+
+                Text(text = "Instrukcje:", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(16.dp))
+                Text(text = cocktail.instructions)
+                Spacer(modifier = Modifier.height(64.dp))
+                Text(
+                    text = "Pozostały czas: ${timeLeft}s",
+                    style = MaterialTheme.typography.headlineMedium,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center
                 ) {
-                    Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "Start")
-                    Spacer(Modifier.width(8.dp))
-                    Text("Start")
-                }
-
-                Button(onClick = { viewModel.stopTimer() }) {
-                    Icon(imageVector = Icons.Filled.Stop, contentDescription = "Stop")
-                    Spacer(Modifier.width(8.dp))
-                    Text("Stop")
-                }
-
-                Button(onClick = { viewModel.resetTimer(cocktail.shakeTimeInSeconds) }) {
-                    Icon(imageVector = Icons.Filled.Close, contentDescription = "Przerwij")
-                    Spacer(Modifier.width(8.dp))
-                    Text("Przerwij")
+                    IconButton(
+                        onClick = { viewModel.startTimer(cocktail.shakeTimeInSeconds) },
+                        enabled = !isRunning
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.PlayArrow,
+                            contentDescription = "Start Timer",
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = { viewModel.stopTimer() },
+                        enabled = isRunning
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Stop,
+                            contentDescription = "Stop Timer",
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
+                    IconButton(
+                        onClick = { viewModel.resetTimer(cocktail.shakeTimeInSeconds) }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Reset Timer",
+                            modifier = Modifier.size(48.dp)
+                        )
+                    }
                 }
             }
         }

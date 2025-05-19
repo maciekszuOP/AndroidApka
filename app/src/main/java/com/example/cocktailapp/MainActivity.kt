@@ -1,19 +1,25 @@
 package com.example.cocktailapp
 
-//import CocktailApp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.example.cocktailapp.ui.theme.CocktailAppTheme
+import androidx.compose.runtime.*
 import androidx.navigation.compose.rememberNavController
+import com.example.cocktailapp.ui.theme.CocktailAppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            CocktailAppTheme {
+            var isDarkTheme by remember { mutableStateOf(false) }
+
+            CocktailAppTheme(darkTheme = isDarkTheme) {
                 val navController = rememberNavController()
-                CocktailApp(navController = navController)
+
+                CocktailApp(
+                    navController = navController,
+                    onToggleTheme = { isDarkTheme = !isDarkTheme }  // przełącz motyw globalnie
+                )
             }
         }
     }

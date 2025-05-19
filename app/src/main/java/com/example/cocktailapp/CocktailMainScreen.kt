@@ -21,28 +21,39 @@ import com.example.cocktailapp.data.Cocktail
 
 
 @Composable
-fun CocktailMainScreen(windowSizeClass: WindowWidthSizeClass) {
+fun CocktailMainScreen(
+    windowSizeClass: WindowWidthSizeClass,
+    onToggleTheme: () -> Unit
+) {
     val isTablet = windowSizeClass >= WindowWidthSizeClass.Medium
     val allCocktails = FakeCocktailRepository.cocktails
 
     var selectedCocktailId by remember { mutableStateOf<Int?>(null) }
 
     if (isTablet) {
-        // Widok tabletowy: lista + szczegóły obok siebie
         Row(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
-                CocktailGridScreen(onCocktailClick = { selectedId ->
-                    selectedCocktailId = selectedId
-                })
+                CocktailGridScreen(
+                    cocktails = allCocktails,          // <--- tutaj dodajemy!
+                    onCocktailClick = { selectedId ->
+                        selectedCocktailId = selectedId
+                    },
+                    onToggleTheme = onToggleTheme
+                )
             }
             Box(modifier = Modifier.weight(2f)) {
                 val cocktail = allCocktails.find { it.id == selectedCocktailId } ?: allCocktails.first()
-                CocktailDetailScreen(cocktail = cocktail) // Wyświetlanie szczegółów
+                CocktailDetailScreen(
+                    cocktail = cocktail,
+                    onToggleTheme = onToggleTheme
+                )
             }
         }
     } else {
-        // Widok telefoniczny: nawigacja między ekranami
         val navController = rememberNavController()
-        CocktailApp(navController)
+        CocktailApp(
+            navController = navController,
+            onToggleTheme = onToggleTheme
+        )
     }
 }

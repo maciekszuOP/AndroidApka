@@ -10,6 +10,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Rum", "Mięta", "Cukier", "Limonka", "Woda gazowana"),
             instructions = "Zgnieć miętę z cukrem i limonką, dodaj rum i wodę gazowaną, wymieszaj.",
             shakeTimeInSeconds = 20,
+            isAlcoholic = true,
             imageRes = R.drawable.mohito
         ),
         Cocktail(
@@ -18,6 +19,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Wódka", "Sok pomidorowy", "Sos Worcestershire", "Sól", "Pieprz"),
             instructions = "Wymieszaj wszystkie składniki i podawaj z lodem oraz selerem naciowym.",
             shakeTimeInSeconds = 30,
+            isAlcoholic = true,
             imageRes = R.drawable.bloody_mary
         ),
         Cocktail(
@@ -26,6 +28,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Rum", "Mleko kokosowe", "Sok ananasowy"),
             instructions = "Zmiksuj składniki z lodem i podawaj w wysokiej szklance.",
             shakeTimeInSeconds = 25,
+            isAlcoholic = true,
             imageRes = R.drawable.pina_kolada
         ),
         Cocktail(
@@ -34,6 +37,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Whiskey", "Sok z cytryny", "Syrop cukrowy"),
             instructions = "Wstrząśnij wszystkie składniki z lodem i odcedź do szklanki.",
             shakeTimeInSeconds = 69,
+            isAlcoholic = true,
             imageRes = R.drawable.whiskey_sour
         ),
         Cocktail(
@@ -42,6 +46,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Wódka", "Triple sec", "Sok żurawinowy", "Sok z limonki"),
             instructions = "Wstrząśnij z lodem i podawaj w kieliszku koktajlowym.",
             shakeTimeInSeconds = 30,
+            isAlcoholic = true,
             imageRes = R.drawable.cosmopolitan
         ),
         Cocktail(
@@ -50,6 +55,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Tequila", "Sok pomarańczowy", "Grenadyna"),
             instructions = "Wlej składniki warstwowo, nie mieszaj, podawaj z lodem.",
             shakeTimeInSeconds = 15,
+            isAlcoholic = true,
             imageRes = R.drawable.tequila_sunrise
         ),
         Cocktail(
@@ -58,6 +64,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Gin", "Campari", "Słodki wermut"),
             instructions = "Wymieszaj wszystkie składniki z lodem i podawaj z plasterkiem pomarańczy.",
             shakeTimeInSeconds = 10,
+            isAlcoholic = true,
             imageRes = R.drawable.negroni
         ),
         Cocktail(
@@ -66,6 +73,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Cachaça", "Limonka", "Cukier trzcinowy"),
             instructions = "Zgnieć limonkę z cukrem, dodaj cachaçę i lód. Wymieszaj.",
             shakeTimeInSeconds = 80,
+            isAlcoholic = true,
             imageRes = R.drawable.caipirinha
         ),
         Cocktail(
@@ -74,6 +82,7 @@ object FakeCocktailRepository {
             ingredients = listOf("Rum jasny", "Rum ciemny", "Triple sec", "Sok limonkowy", "Syrop migdałowy"),
             instructions = "Wymieszaj wszystkie składniki i podawaj z lodem.",
             shakeTimeInSeconds = 60,
+            isAlcoholic = true,
             imageRes = R.drawable.mai_tai
         ),
         Cocktail(
@@ -82,7 +91,17 @@ object FakeCocktailRepository {
             ingredients = listOf("Wódka", "Likier kawowy", "Świeżo zaparzone espresso"),
             instructions = "Wstrząśnij z lodem i odcedź do schłodzonego kieliszka.",
             shakeTimeInSeconds = 30,
+            isAlcoholic = true,
             imageRes = R.drawable.espresso_martini
+        ),
+        Cocktail(
+            id = 11,
+            name = "Virgin Mojito",
+            ingredients = listOf("Mięta", "Cukier", "Limonka", "Woda gazowana"),
+            instructions = "Zgnieć miętę z cukrem i limonką, dodaj wodę gazowaną i wymieszaj.",
+            shakeTimeInSeconds = 15,
+            isAlcoholic = false,
+            imageRes = R.drawable.virgin_mojito
         )
     )
 }
