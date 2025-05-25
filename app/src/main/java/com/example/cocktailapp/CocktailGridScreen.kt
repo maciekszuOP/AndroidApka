@@ -57,7 +57,6 @@ fun CocktailGridScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                 },
-                // Usunąłem navigationIcon bo nie masz drawera
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primary
                 )

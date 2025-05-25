@@ -6,15 +6,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material.icons.filled.Brightness6
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.cocktailapp.data.Cocktail
 import kotlinx.coroutines.delay
@@ -94,7 +91,7 @@ fun CocktailDetailScreen(
                 }
             ) {
                 Icon(
-                    imageVector = Icons.Default.PlayArrow, // Możesz użyć innej ikony, np. Icons.Default.Send
+                    imageVector = Icons.Default.PlayArrow,
                     contentDescription = "Wyślij SMS"
                 )
             }

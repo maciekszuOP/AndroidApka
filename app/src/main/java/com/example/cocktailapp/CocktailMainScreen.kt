@@ -1,6 +1,5 @@
 package com.example.cocktailapp
 
-//import CocktailApp
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -34,7 +33,7 @@ fun CocktailMainScreen(
         Row(modifier = Modifier.fillMaxSize()) {
             Box(modifier = Modifier.weight(1f)) {
                 CocktailGridScreen(
-                    cocktails = allCocktails,          // <--- tutaj dodajemy!
+                    cocktails = allCocktails,
                     onCocktailClick = { selectedId ->
                         selectedCocktailId = selectedId
                     },

@@ -18,7 +18,7 @@ class MainActivity : ComponentActivity() {
 
                 CocktailApp(
                     navController = navController,
-                    onToggleTheme = { isDarkTheme = !isDarkTheme }  // przełącz motyw globalnie
+                    onToggleTheme = { isDarkTheme = !isDarkTheme }
                 )
             }
         }

@@ -25,13 +25,11 @@ class SplashActivity : ComponentActivity() {
         setContent {
             var startAnimation by remember { mutableStateOf(false) }
 
-            // Animacja rotacji z 0 do 360 stopni w 1500 ms
             val rotation = animateFloatAsState(
                 targetValue = if (startAnimation) 360f else 0f,
                 animationSpec = tween(durationMillis = 1500)
             )
 
-            // Uruchom animację i po jej zakończeniu przejdź do MainActivity
             LaunchedEffect(Unit) {
                 startAnimation = true
                 delay(1500)

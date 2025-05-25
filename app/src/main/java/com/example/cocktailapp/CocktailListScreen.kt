@@ -20,7 +20,7 @@ fun CocktailListScreen(
     onToggleTheme: () -> Unit
 ) {
     val tabs = listOf("Główna", "Alkoholowe", "Bezalkoholowe")
-    val pagerState = rememberPagerState(pageCount = { tabs.size })  // tutaj poprawka: pageCount to lambda
+    val pagerState = rememberPagerState(pageCount = { tabs.size })
     val coroutineScope = rememberCoroutineScope()
 
     Column {
